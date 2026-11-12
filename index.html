@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ශ්‍රී ලංකා 2027 නිවාඩු දින දර්ශනය</title>
+    <title>ශ්‍රී ලංකා 2027 නිවාඩු සහ දීර්ඝ සති අන්ත</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,16 +15,17 @@
         <!-- Header -->
         <div class="bg-indigo-900 p-4 pt-8 sticky top-0 z-10 shadow-md">
             <h1 class="text-xl font-bold text-white">ශ්‍රී ලංකා 2027 නිවාඩු</h1>
-            <p class="text-xs text-indigo-200 mt-1">Sri Lanka 2027 Holiday Calendar</p>
+            <p class="text-xs text-indigo-200 mt-1">Holidays & Long Weekends Planner</p>
             
             <!-- Search & Toggle Tabs -->
             <div class="mt-3 space-y-2">
                 <input type="text" id="searchInput" placeholder="🔍 නිවාඩු දිනයක් සොයන්න..." 
                     class="w-full bg-indigo-950 text-white text-sm px-3 py-2 rounded-lg border border-indigo-700 focus:outline-none focus:border-white">
                 
-                <div class="flex bg-indigo-950 p-1 rounded-lg border border-indigo-800 text-xs">
-                    <button id="tabList" onclick="switchTab('list')" class="flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition">නිවාඩු ලැයිස්තුව</button>
-                    <button id="tabCal" onclick="switchTab('cal')" class="flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition">මාසික දර්ශනය</button>
+                <div class="flex bg-indigo-950 p-1 rounded-lg border border-indigo-800 text-[11px] gap-1">
+                    <button id="tabList" class="flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition">ලැයිස්තුව</button>
+                    <button id="tabCal" class="flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition">කැලැන්ඩරය</button>
+                    <button id="tabLong" class="flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition">Long Weekends</button>
                 </div>
             </div>
         </div>
@@ -42,14 +43,23 @@
             <!-- Calendar View -->
             <div id="calView" class="hidden space-y-4">
                 <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800">
-                    <button onclick="changeMonth(-1)" class="bg-indigo-900 px-3 py-1 rounded-lg text-sm font-bold">&larr; පෙර</button>
+                    <button id="prevMonth" class="bg-indigo-900 px-3 py-1 rounded-lg text-sm font-bold">&larr; පෙර</button>
                     <h2 id="monthTitle" class="text-base font-bold text-indigo-300">January 2027</h2>
-                    <button onclick="changeMonth(1)" class="bg-indigo-900 px-3 py-1 rounded-lg text-sm font-bold">ඊළඟ &rarr;</button>
+                    <button id="nextMonth" class="bg-indigo-900 px-3 py-1 rounded-lg text-sm font-bold">ඊළඟ &rarr;</button>
                 </div>
                 <div class="grid grid-cols-7 gap-1 text-center text-xs text-slate-400 font-semibold mb-1">
                     <span class="text-red-400">Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span class="text-red-400">Sat</span>
                 </div>
                 <div id="calendarGrid" class="grid grid-cols-7 gap-1.5"></div>
+            </div>
+
+            <!-- Long Weekends View -->
+            <div id="longView" class="hidden space-y-3">
+                <div class="bg-indigo-950/60 border border-indigo-800/80 p-3 rounded-xl mb-3">
+                    <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wide">🌴 2027 දීර්ඝ සති අන්ත (Long Weekends)</h3>
+                    <p class="text-[11px] text-slate-300 mt-1">නිවාඩු දින සති අන්තය සමඟ එකතු වී ලැබෙන විශේෂ දිගු නිවාඩු දින.</p>
+                </div>
+                <div id="longWeekendsList" class="space-y-2.5"></div>
             </div>
         </div>
 
@@ -60,7 +70,7 @@
                 <h2 id="modalTitle" class="text-lg font-bold text-white mb-2"></h2>
                 <p id="modalSi" class="text-sm text-slate-300 mb-4"></p>
                 <div id="modalBadges" class="flex gap-2 mb-6"></div>
-                <button onclick="closeModal()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-sm">වසන්න (Close)</button>
+                <button id="closeModalBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-bold text-sm">වසන්න (Close)</button>
             </div>
         </div>
 
@@ -99,6 +109,14 @@
             { date: '2027-12-25', display: '25 December, Saturday', name: 'Christmas Day', si: 'නත්තල් දිනය', type: ['B', 'P', 'M'] }
         ];
 
+        const longWeekendsData = [
+            { range: 'Jan 15 - Jan 17', days: '3 Days', title: 'Tamil Thai Pongal Weekend', desc: 'Friday (Pongal) + Sat & Sun' },
+            { range: 'Mar 26 - Mar 28', days: '3 Days', title: 'Good Friday Weekend', desc: 'Friday (Good Friday) + Sat & Sun' },
+            { range: 'May 15 - May 17', days: '3 Days', title: 'Hadji & May Weekend', desc: 'Saturday (May Day) / Monday (Hadji)' },
+            { range: 'Aug 14 - Aug 16', days: '3 Days', title: 'Nikini & Prophet Birthday', desc: 'Sunday (Milad-Un-Nabi) + Monday (Nikini Poya)' },
+            { range: 'Dec 25 - Dec 27', days: '3 Days', title: 'Christmas Weekend', desc: 'Saturday (Christmas) + Sun & Mon recovery' }
+        ];
+
         let currentMonth = 0;
         const monthNames = [
             "January", "February", "March", "April", "May", "June", 
@@ -107,22 +125,44 @@
 
         const listView = document.getElementById('listView');
         const calView = document.getElementById('calView');
+        const longView = document.getElementById('longView');
         const searchInput = document.getElementById('searchInput');
+        const tabList = document.getElementById('tabList');
+        const tabCal = document.getElementById('tabCal');
+        const tabLong = document.getElementById('tabLong');
 
-        function switchTab(tab) {
-            if(tab === 'list') {
-                listView.classList.remove('hidden');
-                calView.classList.add('hidden');
-                document.getElementById('tabList').className = "flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition";
-                document.getElementById('tabCal').className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
-            } else {
-                listView.classList.add('hidden');
-                calView.classList.remove('hidden');
-                document.getElementById('tabCal').className = "flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition";
-                document.getElementById('tabList').className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
-                renderCalendar();
-            }
-        }
+        tabList.addEventListener('click', () => {
+            listView.classList.remove('hidden');
+            calView.classList.add('hidden');
+            longView.classList.add('hidden');
+            tabList.className = "flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition";
+            tabCal.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+            tabLong.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+        });
+
+        tabCal.addEventListener('click', () => {
+            listView.classList.add('hidden');
+            calView.classList.remove('hidden');
+            longView.classList.add('hidden');
+            tabCal.className = "flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition";
+            tabList.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+            tabLong.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+            renderCalendar();
+        });
+
+        tabLong.addEventListener('click', () => {
+            listView.classList.add('hidden');
+            calView.classList.add('hidden');
+            longView.classList.remove('hidden');
+            tabLong.className = "flex-1 py-1.5 rounded-md font-semibold bg-indigo-600 text-white transition";
+            tabList.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+            tabCal.className = "flex-1 py-1.5 rounded-md font-semibold text-indigo-300 transition";
+            renderLongWeekends();
+        });
+
+        document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+        document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
 
         function renderList(filter = '') {
             listView.innerHTML = '';
@@ -152,6 +192,26 @@
                     </div>
                 `;
                 listView.appendChild(item);
+            });
+        }
+
+        function renderLongWeekends() {
+            const container = document.getElementById('longWeekendsList');
+            container.innerHTML = '';
+            longWeekendsData.forEach(lw => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex justify-between items-center shadow-sm';
+                card.innerHTML = `
+                    <div>
+                        <span class="bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded">${lw.days} Off</span>
+                        <h4 class="text-sm font-bold text-white mt-1">${lw.title}</h4>
+                        <p class="text-xs text-slate-400 mt-0.5">${lw.desc}</p>
+                    </div>
+                    <div class="text-right text-xs font-semibold text-indigo-300 bg-indigo-950/80 px-2.5 py-1.5 rounded-lg border border-indigo-800">
+                        ${lw.range}
+                    </div>
+                `;
+                container.appendChild(card);
             });
         }
 
@@ -247,3 +307,5 @@
     </script>
 </body>
 </html>
+
+```
