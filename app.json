@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "platforms": ["ios", "android", "web"],
     "ios": {
       "supportsTablet": true
     },
@@ -18,7 +19,16 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Sri Lanka 2027 Holiday Calendar",
+      "shortName": "SL Holidays",
+      "description": "Official Sri Lanka 2027 public, bank, and mercantile holidays.",
+      "lang": "en",
+      "themeColor": "#1e1b4b",
+      "backgroundColor": "#f8fafc",
+      "display": "standalone"
     }
   }
 }
