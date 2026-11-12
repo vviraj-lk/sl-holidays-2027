@@ -57,7 +57,7 @@
             <div id="longView" class="hidden space-y-3">
                 <div class="bg-indigo-950/60 border border-indigo-800/80 p-3 rounded-xl mb-3">
                     <h3 class="text-xs font-bold text-indigo-300 uppercase tracking-wide">🌴 2027 දීර්ඝ සති අන්ත (Long Weekends)</h3>
-                    <p class="text-[11px] text-slate-300 mt-1">නිවාඩු දින සති අන්තය සමඟ එකතු වී ලැබෙන විශේෂ දිගු නිවාඩු දින.</p>
+                    <p class="text-[11px] text-slate-300 mt-1">සෑම දිගු නිවාඩු සති අන්තයකම අදාළ වන වර්ග (Mercantile, Public, Bank) මෙහි දැක්වේ.</p>
                 </div>
                 <div id="longWeekendsList" class="space-y-2.5"></div>
             </div>
@@ -110,11 +110,11 @@
         ];
 
         const longWeekendsData = [
-            { range: 'Jan 15 - Jan 17', days: '3 Days', title: 'Tamil Thai Pongal Weekend', desc: 'Friday (Pongal) + Sat & Sun' },
-            { range: 'Mar 26 - Mar 28', days: '3 Days', title: 'Good Friday Weekend', desc: 'Friday (Good Friday) + Sat & Sun' },
-            { range: 'May 15 - May 17', days: '3 Days', title: 'Hadji & May Weekend', desc: 'Saturday (May Day) / Monday (Hadji)' },
-            { range: 'Aug 14 - Aug 16', days: '3 Days', title: 'Nikini & Prophet Birthday', desc: 'Sunday (Milad-Un-Nabi) + Monday (Nikini Poya)' },
-            { range: 'Dec 25 - Dec 27', days: '3 Days', title: 'Christmas Weekend', desc: 'Saturday (Christmas) + Sun & Mon recovery' }
+            { range: 'Jan 15 - Jan 17', days: '3 Days', title: 'Tamil Thai Pongal Weekend', desc: 'Friday (Pongal - M,P,B) + Sat & Sun', isMercantile: true },
+            { range: 'Mar 26 - Mar 28', days: '3 Days', title: 'Good Friday Weekend', desc: 'Friday (Good Friday - P,B) + Sat & Sun', isMercantile: false },
+            { range: 'May 15 - May 17', days: '3 Days', title: 'Hadji & May Weekend', desc: 'Saturday (May Day - M,P,B) / Monday (Hadji - P,B)', isMercantile: true },
+            { range: 'Aug 14 - Aug 16', days: '3 Days', title: 'Nikini & Prophet Birthday', desc: 'Sunday (Milad-Un-Nabi - M,P,B) + Monday (Nikini Poya)', isMercantile: true },
+            { range: 'Dec 25 - Dec 27', days: '3 Days', title: 'Christmas Weekend', desc: 'Saturday (Christmas - M,P,B) + Sun & Mon recovery', isMercantile: true }
         ];
 
         let currentMonth = 0;
@@ -201,9 +201,17 @@
             longWeekendsData.forEach(lw => {
                 const card = document.createElement('div');
                 card.className = 'bg-slate-900 border border-slate-800 p-3.5 rounded-xl flex justify-between items-center shadow-sm';
+                
+                let mBadge = lw.isMercantile 
+                    ? '<span class="bg-purple-950 border border-purple-800 text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded ml-1">Mercantile (M) Included</span>'
+                    : '<span class="bg-slate-800 text-slate-400 text-[10px] font-semibold px-2 py-0.5 rounded ml-1">No Mercantile</span>';
+
                 card.innerHTML = `
                     <div>
-                        <span class="bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded">${lw.days} Off</span>
+                        <div class="flex items-center gap-1">
+                            <span class="bg-emerald-950 border border-emerald-800 text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded">${lw.days} Off</span>
+                            ${mBadge}
+                        </div>
                         <h4 class="text-sm font-bold text-white mt-1">${lw.title}</h4>
                         <p class="text-xs text-slate-400 mt-0.5">${lw.desc}</p>
                     </div>
